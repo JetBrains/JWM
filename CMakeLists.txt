@@ -16,6 +16,7 @@ if(APPLE)
 endif()
 
 if (UNIX AND NOT APPLE)
-    add_subdirectory(linux)
+    add_subdirectory(x11)
+    add_subdirectory(wayland)
     message(STATUS "Configure linux platform module")
 endif()

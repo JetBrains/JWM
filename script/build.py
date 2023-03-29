@@ -1,8 +1,8 @@
 #! /usr/bin/env python3
 import argparse, build_utils, common, glob, os, platform, subprocess, sys
 
-def build_native():
-  os.chdir(common.basedir + "/" + build_utils.system)
+def build_native_system(system):
+  os.chdir(common.basedir + "/" + system)
   subprocess.check_call(["cmake",
     "-DCMAKE_BUILD_TYPE=Release",
     "-B", "build",
@@ -25,9 +25,22 @@ def build_native():
 
   return 0
 
+def build_native():
+  # TODO: There is likely a better folder hierarchy than this.
+  cur_system = build_utils.system;
+  if cur_system == "linux":
+    build_native_system("x11")
+    build_native_system("wayland")
+  else:
+    build_native_system(cur_system)
+
+  return 0
+
+
+
 def build_java():
   os.chdir(common.basedir)
-  sources = build_utils.files("linux/java/**/*.java", "macos/java/**/*.java", "shared/java/**/*.java",  "windows/java/**/*.java",)
+  sources = build_utils.files("x11/java/**/*.java", "wayland/java/**/*.java", "macos/java/**/*.java", "shared/java/**/*.java",  "windows/java/**/*.java",)
   build_utils.javac(sources, "target/classes", classpath=common.deps_compile())
   return 0
 
