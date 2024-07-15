@@ -1,8 +1,8 @@
 #! /usr/bin/env python3
 import argparse, build_utils, common, glob, os, platform, subprocess, sys
 
-def build_native():
-  os.chdir(common.basedir + "/" + build_utils.system)
+def build_native_system(system):
+  os.chdir(common.basedir + "/" + system)
   subprocess.check_call(["cmake",
     "-DCMAKE_BUILD_TYPE=Release",
     "-B", "build",
@@ -19,16 +19,30 @@ def build_native():
   
   if os.path.exists('build/libjwm_x64.so'):
     build_utils.copy_newer('build/libjwm_x64.so', '../target/classes/libjwm_x64.so')
+
+  if os.path.exists('build/libjwm_x64_wayland.so'):
+    build_utils.copy_newer('build/libjwm_x64_wayland.so', '../target/classes/libjwm_x64_wayland.so')
   
   if os.path.exists('build/jwm_x64.dll'):
     build_utils.copy_newer('build/jwm_x64.dll', '../target/classes/jwm_x64.dll')
 
   return 0
-
+def build_native():
+  cur_system = build_utils.system;
+  if cur_system == "linux":
+    build_native_system("x11")
+    build_native_system("wayland")
+  else:
+    build_native_system(cur_system)
+  return 0
 def build_java():
   os.chdir(common.basedir)
-  sources = build_utils.files("linux/java/**/*.java", "macos/java/**/*.java", "shared/java/**/*.java",  "windows/java/**/*.java",)
-  build_utils.javac(sources, "target/classes", classpath=common.deps_compile())
+  sources = build_utils.files("x11/java/**/*.java", 
+                              "macos/java/**/*.java", 
+                              "shared/java/**/*.java",  
+                              "windows/java/**/*.java",
+                              "wayland/java/**/*.java")
+  build_utils.javac(sources, "target/classes", classpath=common.deps_compile(), release="16")
   return 0
 
 def main():

@@ -18,7 +18,9 @@ endif()
 find_package(X11 REQUIRED)
 find_package(OpenGL REQUIRED)
 
-file(GLOB SOURCES_CXX ${CMAKE_CURRENT_LIST_DIR}/../shared/cc/*.cc ${CMAKE_CURRENT_LIST_DIR}/cc/*.cc)
+file(GLOB SOURCES_CXX ${CMAKE_CURRENT_LIST_DIR}/../shared/cc/*.cc 
+    ${CMAKE_CURRENT_LIST_DIR}/../linux/cc/*.cc
+    ${CMAKE_CURRENT_LIST_DIR}/cc/*.cc)
 file(GLOB SOURCES_CXX_IMPL ${CMAKE_CURRENT_LIST_DIR}/../shared/cc/impl/*.cc)
 add_library(jwm SHARED ${SOURCES_OBJC} ${SOURCES_CXX} ${SOURCES_CXX_IMPL})
 
@@ -33,7 +35,7 @@ if (NOT JAVA_HOME)
     endif()
 endif()
 
-target_include_directories(jwm PRIVATE ${CMAKE_CURRENT_LIST_DIR}/../shared/cc ${JAVA_HOME}/include ${JAVA_HOME}/include/linux)
+target_include_directories(jwm PRIVATE ${CMAKE_CURRENT_LIST_DIR}/../shared/cc ${CMAKE_CURRENT_LIST_DIR}/../linux/cc ${JAVA_HOME}/include ${JAVA_HOME}/include/linux)
 set_target_properties(jwm PROPERTIES OUTPUT_NAME "jwm_${JWM_ARCH}")
 
 

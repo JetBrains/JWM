@@ -9,9 +9,9 @@ import io.github.humbleui.jwm.*;
 import io.github.humbleui.jwm.impl.*;
 import io.github.humbleui.types.*;
 
-public class WindowX11 extends Window {
+public class WindowWayland extends Window {
     @ApiStatus.Internal
-    public WindowX11() {
+    public WindowWayland() {
         super(_nMake());
     }
 
@@ -43,14 +43,15 @@ public class WindowX11 extends Window {
     @Override
     public Window setWindowPosition(int left, int top) {
         assert _onUIThread() : "Should be run on UI thread";
-        _nSetWindowPosition(left, top);
+        // no : )
         return this;
     }
 
     @Override
     public Window setWindowSize(int width, int height) {
         assert _onUIThread() : "Should be run on UI thread";
-        _nSetWindowSize(width, height);
+        // TODO: don't assume bounds 
+        setContentSize(width, height);
         return this;
     }
 
@@ -64,9 +65,7 @@ public class WindowX11 extends Window {
     @Override
     public Window setTitle(String title) {
         assert _onUIThread() : "Should be run on UI thread";
-        try {
-            _nSetTitle(title.getBytes("UTF-8"));
-        } catch (UnsupportedEncodingException ignored) {}
+        _nSetTitle(title);
         return this;
     }
 
@@ -78,6 +77,7 @@ public class WindowX11 extends Window {
 
     @Override
     public Window setTitlebarVisible(boolean value) {
+        assert _onUIThread() : "Should be run on UI thread";
         _nSetTitlebarVisible(value);
         return this;
     }
@@ -86,18 +86,22 @@ public class WindowX11 extends Window {
     public Window setVisible(boolean isVisible) {
         assert _onUIThread() : "Should be run on UI thread";
         _nSetVisible(isVisible);
-        return super.setVisible(true);
+        // this calls a screen change, which will cause a crash because GL context isn't ready yet
+        // return super.setVisible(true);
+        return this;
     }
 
     @Override
     public Window hideMouseCursorUntilMoved(boolean value) {
-        // TODO impl me!
+        assert _onUIThread() : "Should be run on UI thread";
+        _nHideMouseCursor(value);
         return this;
     }
 
     @Override
     public Window lockMouseCursor(boolean value) {
-        // TODO impl me!
+        assert _onUIThread() : "Should be run on UI thread";
+        _nLockMouseCursor(value);
         return this;
     }
 
@@ -151,7 +155,7 @@ public class WindowX11 extends Window {
     @Override
     public Window focus() {
         assert _onUIThread() : "Should be run on UI thread";
-        // TODO implement
+        _nFocus();
         return this;
     }
 
@@ -211,12 +215,18 @@ public class WindowX11 extends Window {
         return _nIsFullScreen();
     }
 
+    @Override
+    public float getScale() {
+        assert _onUIThread() : "Should be run on UI Thread";
+        return _nGetScale();
+    }
+
     @ApiStatus.Internal public static native long _nMake();
     @ApiStatus.Internal public native void _nSetVisible(boolean isVisible);
     @ApiStatus.Internal public native IRect _nGetWindowRect();
     @ApiStatus.Internal public native IRect _nGetContentRect();
-    @ApiStatus.Internal public native void _nSetWindowPosition(int left, int top);
-    @ApiStatus.Internal public native void _nSetWindowSize(int width, int height);
+    // @ApiStatus.Internal public native void _nSetWindowPosition(int left, int top);
+    // @ApiStatus.Internal public native void _nSetWindowSize(int width, int height);
     @ApiStatus.Internal public native void _nSetMouseCursor(int cursorId);
     @ApiStatus.Internal public native void _nSetContentSize(int width, int height);
     @ApiStatus.Internal public native Screen _nGetScreen();
@@ -225,8 +235,12 @@ public class WindowX11 extends Window {
     @ApiStatus.Internal public native void _nMaximize();
     @ApiStatus.Internal public native void _nMinimize();
     @ApiStatus.Internal public native void _nRestore();
-    @ApiStatus.Internal public native Screen _nSetTitle(byte[] title);
+    @ApiStatus.Internal public native Screen _nSetTitle(String title);
     @ApiStatus.Internal public native void _nSetTitlebarVisible(boolean isVisible);
     @ApiStatus.Internal public native void _nSetFullScreen(boolean isFullScreen);
     @ApiStatus.Internal public native boolean _nIsFullScreen();
+    @ApiStatus.Internal public native float _nGetScale();
+    @ApiStatus.Internal public native void _nLockMouseCursor(boolean locked);
+    @ApiStatus.Internal public native void _nHideMouseCursor(boolean hidden);
+    @ApiStatus.Internal public native void _nFocus();
 }

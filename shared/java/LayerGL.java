@@ -15,8 +15,8 @@ public class LayerGL extends RefCounted implements Layer {
     @Override
     public void attach(Window window) {
         assert _onUIThread() : "Should be run on UI thread";
-        _nAttach(window);
         _window = window;
+        _nAttach(window);
     }
 
     @Override

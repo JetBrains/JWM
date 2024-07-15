@@ -342,9 +342,6 @@ int WindowX11::getHeight() {
     return _height;
 }
 
-float WindowX11::getScale() {
-    return jwm::app.getScale();
-}
 
 bool WindowX11::init()
 {
@@ -589,4 +586,9 @@ extern "C" JNIEXPORT jboolean JNICALL Java_io_github_humbleui_jwm_WindowX11__1nI
         (JNIEnv* env, jobject obj) {
     jwm::WindowX11* instance = reinterpret_cast<jwm::WindowX11*>(jwm::classes::Native::fromJava(env, obj));
     return instance->isFullScreen();
+}
+
+extern "C" JNIEXPORT jfloat JNICALL Java_io_github_humbleui_jwm_WindowX11__1nGetScale
+        (JNIEnv* env, jobject obj) {
+    return jwm::app.getScale(); 
 }

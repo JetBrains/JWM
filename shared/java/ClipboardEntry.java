@@ -62,7 +62,7 @@ public class ClipboardEntry {
      */
     @NotNull @SneakyThrows
     public static ClipboardEntry makeString(ClipboardFormat format, String text) {
-        if (Platform.CURRENT == Platform.X11 || Platform.CURRENT == Platform.MACOS) {
+        if (Platform.CURRENT == Platform.X11 || Platform.CURRENT == Platform.MACOS || Platform.CURRENT == Platform.WAYLAND) {
             return make(format, text.getBytes("UTF-8"));
         }
         return make(format, text.getBytes("UTF-16LE"));
@@ -76,7 +76,7 @@ public class ClipboardEntry {
      */
     @NotNull @SneakyThrows
     public String getString() {
-        if (Platform.CURRENT == Platform.X11 || Platform.CURRENT == Platform.MACOS) {
+        if (Platform.CURRENT == Platform.X11 || Platform.CURRENT == Platform.MACOS || Platform.CURRENT == Platform.WAYLAND) {
             return new String(_data, "UTF-8");
         }
         return new String(_data, "UTF-16LE");

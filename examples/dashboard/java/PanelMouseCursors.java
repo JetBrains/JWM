@@ -56,7 +56,7 @@ public class PanelMouseCursors extends Panel {
                     keepCursor = false;
                 } else if (!keepCursor) {
                     if (window._lastCursor != MouseCursor.ARROW)
-                        window.requestFrame();
+                       window.requestFrame();
                     window.setMouseCursor(MouseCursor.ARROW);
                 }
                 lastInside = inside;

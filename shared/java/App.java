@@ -52,6 +52,8 @@ public class App {
             window = new WindowMac();
         else if (Platform.CURRENT == Platform.X11)
             window = new WindowX11();
+        else if (Platform.CURRENT == Platform.WAYLAND)
+            window = new WindowWayland();
         else
             throw new RuntimeException("Unsupported platform: " + Platform.CURRENT);
         _windows.add(window);
@@ -98,12 +100,15 @@ public class App {
      *
      * @return          primary desktop screen
      */
+    @Nullable
     public static Screen getPrimaryScreen() {
         assert _onUIThread() : "Should be run on UI thread";
+        if (Platform.CURRENT == Platform.WAYLAND)
+            return null;
         for (Screen s: getScreens())
             if (s.isPrimary())
                 return s;
-        throw new IllegalStateException("Can't find primary screen");
+        return null;
     }
 
     public static void openSymbolsPalette() {

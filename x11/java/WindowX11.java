@@ -9,32 +9,32 @@ import io.github.humbleui.jwm.*;
 import io.github.humbleui.jwm.impl.*;
 import io.github.humbleui.types.*;
 
-public class WindowWin32 extends Window {
+public class WindowX11 extends Window {
     @ApiStatus.Internal
-    public WindowWin32() {
+    public WindowX11() {
         super(_nMake());
     }
 
     @Override
     public Window setTextInputEnabled(boolean enabled) {
         assert _onUIThread() : "Should be run on UI thread";
-        _nSetTextInputEnabled(enabled);
+        // TODO: impl me
         return this;
     }
 
     @Override
     public void unmarkText() {
         assert _onUIThread() : "Should be run on UI thread";
-        _nUnmarkText();
+        // TODO: impl me!
     }
 
-    @Override
+    @Override 
     public IRect getWindowRect() {
         assert _onUIThread() : "Should be run on UI thread";
         return _nGetWindowRect();
     }
 
-    @Override
+    @Override 
     public IRect getContentRect() {
         assert _onUIThread() : "Should be run on UI thread";
         return _nGetContentRect();
@@ -64,21 +64,29 @@ public class WindowWin32 extends Window {
     @Override
     public Window setTitle(String title) {
         assert _onUIThread() : "Should be run on UI thread";
-        _nSetTitle(title);
+        try {
+            _nSetTitle(title.getBytes("UTF-8"));
+        } catch (UnsupportedEncodingException ignored) {}
         return this;
     }
 
-
     @Override
-    public Window setIcon(File icon){
-        assert _onUIThread() : "Should be run on UI thread";
-        _nSetIcon(icon.getAbsolutePath().toString());
+    public Window setIcon(File icon) {
+        // TODO #95
         return this;
     }
 
     @Override
     public Window setTitlebarVisible(boolean value) {
-        throw new UnsupportedOperationException("impl me!");
+        _nSetTitlebarVisible(value);
+        return this;
+    }
+
+    @Override
+    public Window setVisible(boolean isVisible) {
+        assert _onUIThread() : "Should be run on UI thread";
+        _nSetVisible(isVisible);
+        return super.setVisible(true);
     }
 
     @Override
@@ -94,25 +102,15 @@ public class WindowWin32 extends Window {
     }
 
     @Override
-    public Window setVisible(boolean isVisible) {
-       assert _onUIThread() : "Should be run on UI thread";
-       _nSetVisible(isVisible);
-       return super.setVisible(true);
-    }
-
-    @Override
     public Window setOpacity(float opacity) {
-        assert _onUIThread() : "Should be run on UI thread";
-        _nSetOpacity(opacity);
+        // TODO: impl me!
         return this;
     }
 
     @Override
-    public float getOpacity() {
-        assert _onUIThread() : "Should be run on UI thread";
-        return _nGetOpacity();
+    public float getOpacity(){
+        throw new UnsupportedOperationException("impl me!");
     }
-
 
     @Override
     public Screen getScreen() {
@@ -131,55 +129,44 @@ public class WindowWin32 extends Window {
         }
     }
 
+    @Override
+    public void close() {
+        assert _onUIThread() && !isClosed();
+        _nClose();
+        super.close();
+    }
+
+    @Override
     public Window maximize() {
-        assert _onUIThread() : "Should be run on UI thread";
         _nMaximize();
         return this;
     }
 
+    @Override
     public Window minimize() {
-        assert _onUIThread() : "Should be run on UI thread";
         _nMinimize();
         return this;
-    }
-
-    public Window restore() {
-        assert _onUIThread() : "Should be run on UI thread";
-        _nRestore();
-        return this;
-    }
-
-    @Override
-    public Window setFullScreen(boolean value) {
-        throw new UnsupportedOperationException("impl me!");
-    }
-
-    @Override
-    public boolean isFullScreen() {
-        throw new UnsupportedOperationException("impl me!");
     }
 
     @Override
     public Window focus() {
         assert _onUIThread() : "Should be run on UI thread";
-        _nFocus();
+        // TODO implement
         return this;
     }
 
     @Override
     public Window bringToFront() {
         assert _onUIThread() : "Should be run on UI thread";
-        _nBringToFront();
+        // TODO implement
         return this;
     }
-    
-    public float getScale() {
-        return this.getScreen().getScale();
-    }
+
     @Override
     public boolean isFront() {
         assert _onUIThread() : "Should be run on UI thread";
-        return _nIsFront();
+        // TODO: impl me
+        return false;
     }
 
     @Override
@@ -206,41 +193,47 @@ public class WindowWin32 extends Window {
     }
 
     @Override
-    public void close() {
-        assert _onUIThread() : "Should be run on UI thread";
-        assert !isClosed() : "Window is already closed";
-        _nClose();
-        super.close();
-    }
-
-    public Window winSetParent(long hwnd) {
-        assert _onUIThread() : "Should be run on UI thread";
-        _nWinSetParent(hwnd);
+    public Window restore() {
+        _nRestore();
         return this;
     }
 
+    @Override
+    public Window setFullScreen(boolean value) {
+        assert _onUIThread() : "Should be run on UI thread";
+        _nSetFullScreen(value);
+        return this;
+    }
+
+    @Override
+    public boolean isFullScreen() {
+        assert _onUIThread() : "Should be run on UI thread";
+        return _nIsFullScreen();
+    }
+
+    @Override
+    public float getScale() {
+        assert _onUIThread() : "Should be run on UI thread";
+        return _nGetScale();
+    }
+
     @ApiStatus.Internal public static native long _nMake();
-    @ApiStatus.Internal public native void _nSetTextInputEnabled(boolean enabled);
-    @ApiStatus.Internal public native void _nUnmarkText();
+    @ApiStatus.Internal public native void _nSetVisible(boolean isVisible);
     @ApiStatus.Internal public native IRect _nGetWindowRect();
     @ApiStatus.Internal public native IRect _nGetContentRect();
     @ApiStatus.Internal public native void _nSetWindowPosition(int left, int top);
     @ApiStatus.Internal public native void _nSetWindowSize(int width, int height);
-    @ApiStatus.Internal public native void _nSetContentSize(int width, int height);
-    @ApiStatus.Internal public native void _nSetTitle(String title);
-    @ApiStatus.Internal public native void _nSetIcon(String iconPath);
-    @ApiStatus.Internal public native void _nSetVisible(boolean isVisible);
-    @ApiStatus.Internal public native void _nSetOpacity(float opacity);
-    @ApiStatus.Internal public native float _nGetOpacity();
     @ApiStatus.Internal public native void _nSetMouseCursor(int cursorId);
+    @ApiStatus.Internal public native void _nSetContentSize(int width, int height);
     @ApiStatus.Internal public native Screen _nGetScreen();
     @ApiStatus.Internal public native void _nRequestFrame();
+    @ApiStatus.Internal public native void _nClose();
     @ApiStatus.Internal public native void _nMaximize();
     @ApiStatus.Internal public native void _nMinimize();
     @ApiStatus.Internal public native void _nRestore();
-    @ApiStatus.Internal public native void _nFocus();
-    @ApiStatus.Internal public native void _nBringToFront();
-    @ApiStatus.Internal public native boolean _nIsFront();
-    @ApiStatus.Internal public native void _nClose();
-    @ApiStatus.Internal public native void _nWinSetParent(long hwnd);
+    @ApiStatus.Internal public native Screen _nSetTitle(byte[] title);
+    @ApiStatus.Internal public native void _nSetTitlebarVisible(boolean isVisible);
+    @ApiStatus.Internal public native void _nSetFullScreen(boolean isFullScreen);
+    @ApiStatus.Internal public native boolean _nIsFullScreen();
+    @ApiStatus.Internal public native float _nGetScale();
 }

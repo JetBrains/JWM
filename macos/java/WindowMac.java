@@ -229,6 +229,11 @@ public class WindowMac extends Window {
     }
 
     @Override
+    public float getScale() {
+        return this.getScreen().getScale();
+    }
+
+    @Override
     public Window setFullScreen(boolean value) {
         assert _onUIThread() : "Should be run on UI thread";
         _nSetFullScreen(value);

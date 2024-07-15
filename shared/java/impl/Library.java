@@ -46,6 +46,9 @@ public class Library {
         } else if (Platform.CURRENT == Platform.X11) {
             File library = _extract("/", "libjwm_x64.so", tempDir);
             System.load(library.getAbsolutePath());
+        } else if (Platform.CURRENT == Platform.WAYLAND) {
+            File library = _extract("/", "libjwm_x64_wayland.so", tempDir);
+            System.load(library.getAbsolutePath());
         }
 
         if (tempDir.exists() && version == null) {

@@ -3,7 +3,8 @@ package io.github.humbleui.jwm;
 public enum Platform {
     WINDOWS,
     X11,
-    MACOS;
+    MACOS,
+    WAYLAND;
 
     public static final Platform CURRENT;
     static {
@@ -13,7 +14,10 @@ public enum Platform {
         else if (os.contains("windows"))
             CURRENT = WINDOWS;
         else if (os.contains("nux") || os.contains("nix"))
-            CURRENT = X11;
+            if (System.getenv("WAYLAND_DISPLAY") != null)
+                CURRENT = WAYLAND;
+            else 
+                CURRENT = X11;
         else
             throw new RuntimeException("Unsupported platform: " + os);
     }

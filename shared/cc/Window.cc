@@ -6,6 +6,7 @@
 
 jwm::Window::~Window() {
     fEnv->DeleteGlobalRef(fWindow);
+    fWindow = nullptr;
 }
 
 void jwm::Window::dispatch(jobject event) {

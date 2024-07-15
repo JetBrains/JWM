@@ -24,7 +24,7 @@ namespace jwm {
         int getTop();
         int getWidth();
         int getHeight();
-        float getScale();
+
         void move(int left, int top);
         void resize(int width, int height);
         void requestRedraw() {

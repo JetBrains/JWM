@@ -4,7 +4,11 @@ import build_utils, common, os, sys
 def main():
   os.chdir(common.basedir)
   build_utils.rmdir("target")
-  build_utils.rmdir(build_utils.system + "/build")
+  if build_utils.system == "linux":
+    build_utils.rmdir("wayland/build")
+    build_utils.rmdir("x11/build")
+  else:
+    build_utils.rmdir(build_utils.system + "/build")
   build_utils.rmdir("examples/dashboard/target")
   return 0
 

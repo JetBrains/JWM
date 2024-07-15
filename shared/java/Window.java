@@ -61,13 +61,16 @@ public abstract class Window extends RefCounted implements Consumer<Event> {
             _layer = null;
         }
         if (layer != null) {
-            layer.attach(this);
             _layer = layer;
-            accept(EventWindowScreenChange.INSTANCE);
+            layer.attach(this);
+            // accepting this immediately causes crashes on wayland
+            if (Platform.CURRENT != Platform.WAYLAND)
+                accept(EventWindowScreenChange.INSTANCE);
         }
         return this;
     }
 
+    public abstract float getScale();
     /**
      * <p>Enables complex text input on this window.</p>
      * <p>Passed value `true` or `false` enables or disables complex text input and IME on this window respectively.</p>
