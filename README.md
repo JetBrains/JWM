@@ -133,6 +133,8 @@ Alpha. Expect API breakages.
 | setMinimumSize      | ❌   | ❌   | ❌   |
 | setMaximumSize      | ❌   | ❌   | ❌   |
 | setResizable        | ❌   | ❌   | ❌   |
+| bringToFront        | ✅   | ❌   | ❌   |
+| isFront             | ✅   | ✅   | ❌   |
 
 ### Events
 
@@ -224,6 +226,35 @@ Run examples without building (use version from the table above):
 
 ```
 ./script/run.py --jwm-version <version>
+```
+
+### Local JAR
+
+Generate & install a local .jar file:
+
+```
+./script/install.py
+```
+
+This outputs `target/jwm-0.0.0-SNAPSHOT.jar` for use in testing (e.g. `io.github.humbleui/jwm {:local/root "..."}` if using deps.edn)
+
+### MacOS
+
+Before running the build, ensure you've installed:
+* XCode Developer Tools (`xcode-select --install`)
+* Ninja (`brew install ninja`)
+* Python 3 (`brew install python`)
+
+### Debugging
+
+Set `JWM_VERBOSE` in process env to see extra log output when running locally.
+
+``` bash
+# Mac / Linux
+export JWM_VERBOSE=true
+
+# Windows
+set JWM_VERBOSE=true
 ```
 
 # Contributing

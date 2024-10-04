@@ -18,7 +18,7 @@ bool _isHighContrast() {
         return false;
     }
     bool result = (HCF_HIGHCONTRASTON & highContrast.dwFlags) == 1;
-    JWM_VERBOSE("is HighContrast? '" << result << "'");
+    // JWM_VERBOSE("is HighContrast? '" << result << "'");
     return result;
 }
 

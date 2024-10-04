@@ -25,6 +25,9 @@ or from chocolatey
 ```sh
 choco install -y python
 ```
+
+You'll need to ensure your Java installation's `$JAVA_HOME/bin` is on your system PATH. This exposes necessary interop codefiles like `jni.h` to the compiler. Your JAVA bin path will look similar to "`C:\Program Files\Java\jdk-17.0.2\bin`"
+
 ## Install Ninja
 
 Download executable from https://github.com/ninja-build/ninja/releases and export path.

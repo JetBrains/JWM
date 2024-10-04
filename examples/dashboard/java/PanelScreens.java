@@ -20,6 +20,8 @@ public class PanelScreens extends Panel {
             titleStyles = new Options("Default", "Hidden", "Transparent", "Unified", "Unified Compact", "Unified Transparent", "Unified Compact Transparent");
         } else if (Platform.X11 == Platform.CURRENT) {
             titleStyles = new Options("Default", "Hidden");
+        } else if (Platform.WINDOWS == Platform.CURRENT) {
+            titleStyles = new Options("Default", "Hidden");
         }
     }
 
@@ -60,6 +62,14 @@ public class PanelScreens extends Panel {
             }
         } else if (Platform.X11 == Platform.CURRENT) {
             WindowX11 w = (WindowX11) window;
+            switch (style) {
+            case "Default" ->
+                w.setTitlebarVisible(true);
+            case "Hidden" ->
+                w.setTitlebarVisible(false);
+            }
+        } else if (Platform.WINDOWS == Platform.CURRENT) {
+            WindowWin32 w = (WindowWin32) window;
             switch (style) {
             case "Default" ->
                 w.setTitlebarVisible(true);
