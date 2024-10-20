@@ -3,6 +3,9 @@
 
 #include <algorithm>
 #include <Carbon/Carbon.h>
+#include <CoreFoundation/CoreFoundation.h>
+#include <CoreGraphics/CoreGraphics.h>
+#include <Foundation/Foundation.h>
 #include <jni.h>
 #include "impl/JNILocal.hh"
 #include "impl/Library.hh"
@@ -387,6 +390,19 @@ static const NSRange kEmptyRange = { NSNotFound, 0 };
     return NSTouchTypeMaskIndirect; // | NSTouchTypeMaskDirect;
 }
 
+- (float)getScrollScaling {
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    NSString *scrollScaling = [defaults objectForKey:@"com.apple.scrollwheel.scaling"]; 
+
+    // If never set, the value will be null. Return scale factor of 1.0
+    if (scrollScaling == nil) {
+        return 1.0; // No scaling.
+    }
+
+    // Value is 0->1.0. Return a "scale factor" to multiply delta by.
+    return [scrollScaling floatValue] + 1.0; 
+}
+
 - (BOOL)wantsRestingTouches {
     // we set this to YES to prevent resting touches from triggering the cancel event
     return YES;
@@ -484,6 +500,7 @@ static const NSRange kEmptyRange = { NSNotFound, 0 };
     jint modifierMask = jwm::modifierMask([event modifierFlags]);
     CGFloat deltaX;
     CGFloat deltaY;
+    // Retrieve the scrolling speed
     if ([event hasPreciseScrollingDeltas]) {
         deltaX = [event scrollingDeltaX];
         deltaY = [event scrollingDeltaY];
@@ -495,7 +512,22 @@ static const NSRange kEmptyRange = { NSNotFound, 0 };
     CGFloat scale = fWindow->getScale();
     deltaX *= scale;
     deltaY *= scale;
-    jwm::JNILocal<jobject> eventObj(fWindow->fEnv, jwm::classes::EventMouseScroll::make(fWindow->fEnv, deltaX, deltaY, 0, 0, 0, fLastPos.x, fLastPos.y, modifierMask));
+
+    // Accessibility scaling.
+    float scrollScaling = [self getScrollScaling];
+    deltaX *= scrollScaling;
+    deltaY *= scrollScaling;
+
+    // deltaLines
+    CGFloat deltaLines;
+    CGEventSourceRef source = CGEventSourceCreate(kCGEventSourceStateCombinedSessionState);
+    if (source) {
+        double pixelsPerLine = CGEventSourceGetPixelsPerLine(source);
+        deltaLines = deltaY / pixelsPerLine;
+        CFRelease(source);
+    }
+
+    jwm::JNILocal<jobject> eventObj(fWindow->fEnv, jwm::classes::EventMouseScroll::make(fWindow->fEnv, deltaX, deltaY, 0, deltaLines, 0, fLastPos.x, fLastPos.y, modifierMask));
     fWindow->dispatch(eventObj.get());
 }
 
